@@ -9,5 +9,7 @@ To run ```amanda_chatbot.py```, create a models directory and download a .bin fi
 Run one of the scripts with e.g.:
 
 ```bash
-streamlit run gpt_chatbot.py```
+streamlit run gpt_chatbot.py
+```
+
 
