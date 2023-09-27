@@ -46,7 +46,6 @@ else:
     llm = CTransformers(model='models/llama-2-13b-chat.ggmlv3.q8_0.bin', model_type='llama',
                   config={'gpu_layers': 7, 'max_new_tokens': 128, 'temperature': 0.02})
 
-
     @st.cache_resource
     def get_memory():
         return ConversationBufferMemory(memory_key="chat_history")
@@ -60,8 +59,6 @@ else:
             memory=memory,
         )
 
-
-    ################################### STREAMLIT STUFF ####################################
     bot_icon_seed = 23
     st.set_page_config(page_title="Amanda - An LLM-powered Streamlit app for therapy")
 
@@ -74,19 +71,17 @@ else:
         st.write('Made by Matthew Vowels')
 
     # Generate empty lists for generated and past.
-    ## generated stores AI generated responses
+    # stores AI generated responses
     if 'generated' not in st.session_state:
         st.session_state['generated'] = [initial_bot_message]
 
     if 'past' not in st.session_state:
         st.session_state['past'] = [' ']
 
-
     # Layout of input/response containers
     input_container = st.container()
     colored_header(label='', description='', color_name='blue-30')
     response_container = st.container()
-
 
     if 'input_text' not in st.session_state:
         st.session_state.input_text = ''
@@ -95,28 +90,23 @@ else:
         st.session_state.input_text = st.session_state.input_widget
         st.session_state.input_widget = ''
     # User input
-    ## Function for taking user provided prompt as input
+    # Function for taking user provided prompt as input
     def get_text():
         input_text = st.text_input("You: ", "", key="input_widget", on_change=submit)
         return st.session_state.input_text
 
-
-    ## Applying the user input box
+    # Applying the user input box
     with input_container:
         user_input = get_text()
 
-
-    ## Conditional display of AI generated responses as a function of user provided prompts
+    # Conditional display of AI generated responses as a function of user provided prompts
     with response_container:
 
         memory = get_memory()
         llm_chain = get_llm_chain()
 
-
         if user_input:
             st.session_state.past.append(user_input)
-
-
             placeholder = st.empty()
 
             # Display something in the placeholder
@@ -143,12 +133,10 @@ else:
                 if i > 0:
                     message(st.session_state['past'][i], is_user=True, key=str(i) + '_user', avatar_style='identicon')
 
-
     if len(st.session_state.past) < len(st.session_state.generated):
         st.session_state.past.append(None)
     elif len(st.session_state.generated) < len(st.session_state.past):
         st.session_state.generated.append(None)
-
 
     # Create a DataFrame with chat history
     df_chat = pd.DataFrame({

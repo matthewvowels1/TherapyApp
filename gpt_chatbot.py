@@ -50,7 +50,6 @@ else:
 
     llm = ChatOpenAI(model_name='gpt-4')
 
-
     @st.cache_resource
     def get_memory():
         return ConversationBufferMemory(memory_key="chat_history")
@@ -64,11 +63,8 @@ else:
             memory=memory,
         )
 
-
-    ################################### STREAMLIT STUFF ####################################
     bot_icon_seed = 23
     st.set_page_config(page_title="Amanda - An LLM-powered Streamlit app for therapy")
-
 
     with st.sidebar:
         st.title('<3 Amanda')
@@ -79,13 +75,12 @@ else:
         st.write('Made by Matthew Vowels')
 
     # Generate empty lists for generated and past.
-    ## generated stores AI generated responses
+    # stores AI generated responses
     if 'generated' not in st.session_state:
         st.session_state['generated'] = [initial_bot_message]
 
     if 'past' not in st.session_state:
         st.session_state['past'] = [' ']
-
 
     # Layout of input/response containers
     input_container = st.container()
@@ -105,11 +100,9 @@ else:
         input_text = st.text_input("You: ", "", key="input_widget", on_change=submit)
         return st.session_state.input_text
 
-
     ## Applying the user input box
     with input_container:
         user_input = get_text()
-
 
     ## Conditional display of AI generated responses as a function of user provided prompts
     with response_container:
@@ -117,11 +110,8 @@ else:
         memory = get_memory()
         llm_chain = get_llm_chain()
 
-
         if user_input:
             st.session_state.past.append(user_input)
-
-
             placeholder = st.empty()
 
             # Display something in the placeholder
@@ -153,7 +143,6 @@ else:
         st.session_state.past.append(None)
     elif len(st.session_state.generated) < len(st.session_state.past):
         st.session_state.generated.append(None)
-
 
     # Create a DataFrame with chat history
     df_chat = pd.DataFrame({
