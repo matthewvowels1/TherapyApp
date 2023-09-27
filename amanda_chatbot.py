@@ -14,18 +14,18 @@ if 'is_authenticated' not in st.session_state:
 if 'username' not in st.session_state:
     st.session_state.username = ''
 
-# 2. Splash Screen UI
+# Splash Screen UI
 def display_auth_page():
     st.title('Login to Amanda Chatbot')
     st.session_state.username = st.text_input('Username:')
     if st.button('Proceed'):
-        # 3. Authentication Logic
+        # Authentication Logic
         if st.session_state.username:
             st.session_state.is_authenticated = True
         else:
             st.warning('Please enter a username to proceed.')
 
-# 4. Conditional Display
+# Conditional Display
 if not st.session_state.is_authenticated:
     display_auth_page()
 else:
@@ -64,7 +64,6 @@ else:
     ################################### STREAMLIT STUFF ####################################
     bot_icon_seed = 23
     st.set_page_config(page_title="Amanda - An LLM-powered Streamlit app for therapy")
-
 
     with st.sidebar:
         st.title('<3 Amanda')
