@@ -9,9 +9,15 @@ from streamlit_chat import message
 from streamlit_extras.colored_header import colored_header
 from streamlit_extras.add_vertical_space import add_vertical_space
 
+st.set_page_config(page_title="Amanda - An LLM-powered Streamlit app for therapy")
 
-os.environ["OPENAI_API_KEY"] = '---------------------------'
 
+api_key = os.getenv('OPENAI_API_KEY')
+
+os.environ["OPENAI_API_KEY"] = api_key
+
+if api_key is None:
+    raise ValueError("OPENAI_API_KEY is not set. Please set the environment variable before running the script.")
 
 if 'is_authenticated' not in st.session_state:
     st.session_state['is_authenticated'] = False
@@ -22,18 +28,39 @@ if 'username' not in st.session_state:
 # Splash Screen UI
 def display_auth_page():
     st.title('Login to Amanda Chatbot')
-    st.session_state.username = st.text_input('Username:')
-    if st.button('Proceed'):
-        # Authentication Logic
-        if st.session_state.username:
-            st.session_state.is_authenticated = True
-        else:
-            st.warning('Please enter a username to proceed.')
 
-# Conditional Display
-if not st.session_state.is_authenticated:
-    display_auth_page()
-else:
+    # Directly use the returned value from text_input without setting session_state here
+    username = st.text_input('Prolific ID:')
+
+    if st.button('Proceed'):
+        if username:  # Check the username directly from the input
+            st.session_state.username = username  # Set the session state username
+            st.session_state.is_authenticated = True
+            st.experimental_rerun()
+
+        else:
+            st.warning('Please enter a Prolific ID to proceed.')
+
+
+    # Display a non-interactive text area with pre-defined text
+    text_area_html = """
+        <style>
+            textarea {
+                width: 100%;
+                height: 100px;
+                background-color: transparent;
+                color: black;
+                border: 1px solid #ccc;
+                padding: 10px;
+            }
+        </style>
+    Please note that in order to interact with Amanda, what you write will be sent to OpenAI in the U.S. and will be stored on their servers for up to 30 days. Thus, please do not provide any identifying information or personal details when interacting with the chatbot.
+        </textarea>
+        """
+    st.markdown(text_area_html, unsafe_allow_html=True)
+
+
+def display_main_chat():
     ################################### LLM STUFF ####################################
 
     initial_bot_message = "Hi. I'm Amanda. Can you tell me what has brought you in today?"
@@ -64,7 +91,6 @@ else:
         )
 
     bot_icon_seed = 23
-    st.set_page_config(page_title="Amanda - An LLM-powered Streamlit app for therapy")
 
     with st.sidebar:
         st.title('<3 Amanda')
@@ -152,3 +178,14 @@ else:
 
     # Save the DataFrame to a CSV file
     df_chat.to_csv(f'{st.session_state.username}_chat_history.csv', index=False)
+
+
+# Check for authentication on every run
+if 'is_authenticated' not in st.session_state:
+    st.session_state.is_authenticated = False
+
+if st.session_state.is_authenticated:
+    display_main_chat()
+else:
+    display_auth_page()
+
